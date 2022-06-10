@@ -1,0 +1,32 @@
+spring:
+  profile:
+    active: dev
+  datasource:
+    url:
+    username:
+    password:
+  jpa:
+    hibernate.ddl-auto: update
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            require: true
+application:
+  swagger:
+    title:
+    description:
+    version:
+    terms-of-service-url:
+    contact-name:
+    contact-url:
+    contact-email:
+    licence:
+    licence-url:
