@@ -38,7 +38,6 @@ public class WebConfiguration implements WebMvcConfigurer {
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedOriginPatterns(Collections.singletonList("*"));
         corsConfiguration.addAllowedHeader("*");
-        corsConfiguration.addExposedHeader("Content-Disposition"); // allows attaching files in response
         corsConfiguration.addAllowedMethod(HttpMethod.GET);
         corsConfiguration.addAllowedMethod(HttpMethod.POST);
         corsConfiguration.addAllowedMethod(HttpMethod.PUT);
