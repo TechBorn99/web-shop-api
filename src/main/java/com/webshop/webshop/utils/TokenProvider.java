@@ -1,7 +1,7 @@
 package com.webshop.webshop.utils;
 
 import com.webshop.webshop.configs.ApplicationProperties;
-import com.webshop.webshop.domain.user.Account;
+import com.webshop.webshop.domain.user.account.Account;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

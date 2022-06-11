@@ -1,6 +1,7 @@
 package com.webshop.webshop.web.rest.auth;
 
 import com.webshop.webshop.services.auth.AuthenticationService;
+import com.webshop.webshop.utils.ReturnResponse;
 import com.webshop.webshop.web.rest.auth.payload.request.SignUpRequestDto;
 import com.webshop.webshop.web.rest.auth.payload.response.SignUpResponseDto;
 import io.swagger.annotations.ApiOperation;
@@ -23,6 +24,6 @@ public class AuthenticationResource {
     @PostMapping("/sign-up")
     @ApiOperation("Endpoint for user sign up.")
     public ResponseEntity<SignUpResponseDto> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto) {
-        return null;
+        return ReturnResponse.entityCreated(authenticationService.signUp(signUpRequestDto));
     }
 }

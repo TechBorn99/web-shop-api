@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 import java.time.LocalDateTime;
 
 @Data
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 public class BaseWithTimestampsDto extends BaseDto {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")

@@ -1,6 +1,7 @@
-package com.webshop.webshop.domain.user;
+package com.webshop.webshop.domain.user.account;
 
 import com.webshop.webshop.domain.base.BaseEntity;
+import com.webshop.webshop.web.rest.auth.payload.request.SignUpRequestDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -40,4 +41,15 @@ public class Account extends BaseEntity {
     @Column(unique = true)
     private String hash;
 
+    public Account(SignUpRequestDto requestDto, String encodedPassword, String roleName, String hash) {
+        Role role = new Role(roleName);
+
+        this.setFirstName(requestDto.getFirstName());
+        this.setLastName(requestDto.getLastName());
+        this.setEmail(requestDto.getEmail());
+        this.setPassword(encodedPassword);
+        this.setIsActive(false);
+        this.setHash(hash);
+        this.setRole(role);
+    }
 }
