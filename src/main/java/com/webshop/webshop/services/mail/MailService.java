@@ -58,4 +58,15 @@ public class MailService {
 
         this.sendHtmlMail(sendTo, MailConstants.SUBJECT_FORGOT_PASSWORD, body);
     }
+
+    public void composeWelcomeMail(String receiver, String password) {
+        final Context context = new Context();
+
+        context.setVariable("email", receiver);
+        context.setVariable("password", password);
+
+        String body = templateEngine.process(MailConstants.FILE_CREATE_ACCOUNT, context);
+
+        this.sendHtmlMail(new String[] { receiver }, MailConstants.SUBJECT_CREATE_ACCOUNT, body);
+    }
 }

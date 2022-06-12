@@ -59,16 +59,9 @@ public class AuthenticationService {
     public AccountResponseDto signUp(SignUpRequestDto requestDto) {
         accountService.findOneByEmailAndThrowIfExists(requestDto.getEmail());
 
-        String hash = HashValueProvider.generateHash();
         String roleName = requestDto.getRole().getName();
-        String password = bCryptPasswordEncoder.encode(requestDto.getPassword());
 
-        Account account = new Account(
-                requestDto,
-                password,
-                roleService.findOneByNameOrElseThrowNotFound(roleName),
-                hash
-        );
+        Account account = this.accountService.createAndGeneratePassword(requestDto);
 
         switch (roleName) {
             case AuthoritiesConstants.WEBSHOP_CUSTOMER:

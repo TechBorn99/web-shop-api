@@ -1,12 +1,18 @@
 package com.webshop.webshop.services.user.account;
 
 import com.webshop.webshop.domain.user.account.Account;
+import com.webshop.webshop.domain.user.account.Role;
 import com.webshop.webshop.repositories.AccountRepository;
+import com.webshop.webshop.services.mail.MailService;
+import com.webshop.webshop.services.role.RoleService;
 import com.webshop.webshop.utils.exceptions.consts.ExceptionErrorCodeType;
 import com.webshop.webshop.utils.exceptions.types.EntityAlreadyExistsException;
 import com.webshop.webshop.utils.exceptions.types.EntityNotFoundException;
 import com.webshop.webshop.utils.exceptions.types.EntityNotSavedException;
+import com.webshop.webshop.web.rest.auth.payload.request.SignUpRequestDto;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,6 +20,15 @@ public class AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private MailService mailService;
 
     public Account findOneByEmailOrElseThrowNotFound(String email) {
         return accountRepository.findOneByEmail(email).orElseThrow(
@@ -41,5 +56,20 @@ public class AccountService {
             throw new EntityNotSavedException(ExceptionErrorCodeType.ACCOUNT_NOT_SAVED,
                     "Account not saved in the database");
         }
+    }
+
+    public Account createAndGeneratePassword(SignUpRequestDto requestDto) {
+        this.findOneByEmailAndThrowIfExists(requestDto.getEmail());
+
+        Role role = this.roleService.findOneByNameOrElseThrowNotFound(requestDto.getRole().getName());
+        Account account = new Account(requestDto);
+        String password = RandomString.make(16);
+
+        account.setRole(role);
+        account.setPassword(this.bCryptPasswordEncoder.encode(password));
+
+        this.mailService.composeWelcomeMail(requestDto.getEmail(), password);
+
+        return this.save(account);
     }
 }

@@ -21,10 +21,6 @@ public class SignUpRequestDto {
     @Size(max = 128)
     private String email;
 
-    @NotBlank
-    @Size(max = 64)
-    private String password;
-
     @NotNull
     private RoleRequestDto role;
 
