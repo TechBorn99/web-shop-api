@@ -1,6 +1,6 @@
 package com.webshop.webshop.repositories;
 
-import com.webshop.webshop.domain.user.Account;
+import com.webshop.webshop.domain.user.account.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;
@@ -9,5 +9,6 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
     Optional<Account> findOneByEmail(String email);
+    Optional<Account> findOneByHash(String hash);
 
 }
