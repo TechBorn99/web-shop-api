@@ -5,6 +5,7 @@ import com.webshop.webshop.repositories.AccountRepository;
 import com.webshop.webshop.utils.exceptions.consts.ExceptionErrorCodeType;
 import com.webshop.webshop.utils.exceptions.types.EntityAlreadyExistsException;
 import com.webshop.webshop.utils.exceptions.types.EntityNotFoundException;
+import com.webshop.webshop.utils.exceptions.types.EntityNotSavedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,4 +28,18 @@ public class AccountService {
         }
     }
 
+    public Account findOneByHashOrElseThrowNotFound (String hash) {
+        return accountRepository.findOneByHash(hash).orElseThrow(
+                () -> new EntityNotFoundException(ExceptionErrorCodeType.ACCOUNT_NOT_FOUND_BY_HASH,
+                        "Account with hash " + hash + " not found"));
+    }
+
+    public Account save(Account account) {
+        try {
+            return accountRepository.save(account);
+        } catch (Exception ex) {
+            throw new EntityNotSavedException(ExceptionErrorCodeType.ACCOUNT_NOT_SAVED,
+                    "Account not saved in the database");
+        }
+    }
 }

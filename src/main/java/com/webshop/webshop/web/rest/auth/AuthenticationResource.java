@@ -3,6 +3,7 @@ package com.webshop.webshop.web.rest.auth;
 import com.webshop.webshop.services.auth.AuthenticationService;
 import com.webshop.webshop.utils.ReturnResponse;
 import com.webshop.webshop.web.rest.auth.payload.request.ForgotPasswordRequestDto;
+import com.webshop.webshop.web.rest.auth.payload.request.ResetPasswordRequestDto;
 import com.webshop.webshop.web.rest.auth.payload.request.SignInRequestDto;
 import com.webshop.webshop.web.rest.auth.payload.request.SignUpRequestDto;
 import com.webshop.webshop.web.rest.auth.payload.response.AccountResponseDto;
@@ -40,5 +41,11 @@ public class AuthenticationResource {
     @ApiOperation("Endpoint for the forgot password functionality.")
     public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequestDto requestDto) {
         return ReturnResponse.entityGet(authenticationService.forgotPassword(requestDto));
+    }
+
+    @PostMapping("/reset-password")
+    @ApiOperation("Endpoint for resetting password.")
+    public ResponseEntity<Void> resetPassword(@RequestBody @Valid ResetPasswordRequestDto requestDto) {
+        return ReturnResponse.entityUpdated(authenticationService.resetPassword(requestDto));
     }
 }

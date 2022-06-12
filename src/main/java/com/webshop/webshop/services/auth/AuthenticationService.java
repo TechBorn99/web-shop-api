@@ -5,6 +5,7 @@ import com.webshop.webshop.domain.user.WebShopCustomer;
 import com.webshop.webshop.domain.user.WebShopSeller;
 import com.webshop.webshop.domain.user.account.Account;
 import com.webshop.webshop.services.mail.MailService;
+import com.webshop.webshop.services.role.RoleService;
 import com.webshop.webshop.services.user.WebShopAdminService;
 import com.webshop.webshop.services.user.WebShopCustomerService;
 import com.webshop.webshop.services.user.WebShopSellerService;
@@ -15,6 +16,7 @@ import com.webshop.webshop.utils.TokenProvider;
 import com.webshop.webshop.utils.exceptions.consts.ExceptionErrorCodeType;
 import com.webshop.webshop.utils.exceptions.types.UserUnauthorizedException;
 import com.webshop.webshop.web.rest.auth.payload.request.ForgotPasswordRequestDto;
+import com.webshop.webshop.web.rest.auth.payload.request.ResetPasswordRequestDto;
 import com.webshop.webshop.web.rest.auth.payload.request.SignInRequestDto;
 import com.webshop.webshop.web.rest.auth.payload.request.SignUpRequestDto;
 import com.webshop.webshop.web.rest.auth.payload.response.AccountResponseDto;
@@ -51,6 +53,9 @@ public class AuthenticationService {
     @Autowired
     private MailService mailService;
 
+    @Autowired
+    private RoleService roleService;
+
     public AccountResponseDto signUp(SignUpRequestDto requestDto) {
         accountService.findOneByEmailAndThrowIfExists(requestDto.getEmail());
 
@@ -58,7 +63,12 @@ public class AuthenticationService {
         String roleName = requestDto.getRole().getName();
         String password = bCryptPasswordEncoder.encode(requestDto.getPassword());
 
-        Account account = new Account(requestDto, password, roleName, hash);
+        Account account = new Account(
+                requestDto,
+                password,
+                roleService.findOneByNameOrElseThrowNotFound(roleName),
+                hash
+        );
 
         switch (roleName) {
             case AuthoritiesConstants.WEBSHOP_CUSTOMER:
@@ -106,4 +116,14 @@ public class AuthenticationService {
         return account.getHash();
     }
 
+    public Void resetPassword(ResetPasswordRequestDto requestDto) {
+        Account account = accountService.findOneByHashOrElseThrowNotFound(requestDto.getHash());
+
+        account.setPassword(requestDto.getPassword());
+        account.setHash(HashValueProvider.generateHash());
+
+        accountService.save(account);
+
+        return null;
+    }
 }

@@ -9,5 +9,6 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
     Optional<Account> findOneByEmail(String email);
+    Optional<Account> findOneByHash(String hash);
 
 }

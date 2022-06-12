@@ -41,9 +41,7 @@ public class Account extends BaseEntity {
     @Column(unique = true)
     private String hash;
 
-    public Account(SignUpRequestDto requestDto, String encodedPassword, String roleName, String hash) {
-        Role role = new Role(roleName);
-
+    public Account(SignUpRequestDto requestDto, String encodedPassword, Role role, String hash) {
         this.setFirstName(requestDto.getFirstName());
         this.setLastName(requestDto.getLastName());
         this.setEmail(requestDto.getEmail());
