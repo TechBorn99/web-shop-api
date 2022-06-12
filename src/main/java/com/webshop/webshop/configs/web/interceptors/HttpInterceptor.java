@@ -21,7 +21,7 @@ public class HttpInterceptor implements HandlerInterceptor {
             HttpServletResponse response,
             Object handler) throws Exception {
         logger.info("~> ["
-                + new Date().toString()
+                + new Date()
                 + "] - REQUEST: "
                 + request.getRequestURI() + " | "
                 + request.getMethod());
@@ -34,7 +34,7 @@ public class HttpInterceptor implements HandlerInterceptor {
             Object object,
             ModelAndView modelAndView
     ) {
-        logger.info("✅ [" + new Date().toString() + "] - SUCCESSFUL: " +
+        logger.info("✅ [" + new Date() + "] - SUCCESSFUL: " +
                 request.getRequestURI() + " " + request.getQueryString() +
                 " | " + request.getMethod() + " | " + response.getStatus());
     }

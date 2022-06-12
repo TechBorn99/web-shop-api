@@ -1,7 +1,7 @@
 package com.webshop.webshop.configs.security.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.webshop.webshop.domain.user.Role;
+import com.webshop.webshop.domain.user.account.Role;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,6 +1,7 @@
 package com.webshop.webshop.services.mail;
 
 import com.webshop.webshop.utils.exceptions.consts.ExceptionErrorCodeType;
+import com.webshop.webshop.utils.exceptions.consts.MailConstants;
 import com.webshop.webshop.utils.exceptions.types.EmailNotSentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
@@ -9,6 +10,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -37,6 +39,7 @@ public class MailService {
             mimeMessageHelper.setTo(sendTo);
             mimeMessageHelper.setSubject(subject);
             mimeMessageHelper.setText(body, true);
+
             javaMailSender.send(mimeMessage);
         } catch (MessagingException ex) {
             throw new EmailNotSentException(
@@ -44,5 +47,27 @@ public class MailService {
                     "Email was not sent."
             );
         }
+    }
+
+    public void composeForgotPasswordMail(String[] sendTo, String url) {
+        final Context forgotPasswordContext = new Context();
+
+        forgotPasswordContext.setVariable("url", url);
+
+        String body = templateEngine.process(MailConstants.FILE_FORGOT_PASSWORD, forgotPasswordContext);
+
+        this.sendHtmlMail(sendTo, MailConstants.SUBJECT_FORGOT_PASSWORD, body);
+    }
+
+    public void composeWelcomeMail(String receiver, String password) {
+        final Context context = new Context();
+
+        context.setVariable("email", receiver);
+        context.setVariable("password", password);
+        context.setVariable("appUrl", System.getenv("APP_URL"));
+
+        String body = templateEngine.process(MailConstants.FILE_CREATE_ACCOUNT, context);
+
+        this.sendHtmlMail(new String[] { receiver }, MailConstants.SUBJECT_CREATE_ACCOUNT, body);
     }
 }

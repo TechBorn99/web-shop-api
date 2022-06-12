@@ -1,7 +1,7 @@
 package com.webshop.webshop.configs.security;
 
 import com.webshop.webshop.configs.security.models.UserPrincipal;
-import com.webshop.webshop.domain.user.Account;
+import com.webshop.webshop.domain.user.account.Account;
 import com.webshop.webshop.services.user.account.AccountService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
