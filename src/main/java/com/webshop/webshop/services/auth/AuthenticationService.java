@@ -13,6 +13,7 @@ import com.webshop.webshop.utils.HashValueProvider;
 import com.webshop.webshop.utils.TokenProvider;
 import com.webshop.webshop.utils.exceptions.consts.ExceptionErrorCodeType;
 import com.webshop.webshop.utils.exceptions.types.UserUnauthorizedException;
+import com.webshop.webshop.web.rest.auth.payload.request.ForgotPasswordRequestDto;
 import com.webshop.webshop.web.rest.auth.payload.request.SignInRequestDto;
 import com.webshop.webshop.web.rest.auth.payload.request.SignUpRequestDto;
 import com.webshop.webshop.web.rest.auth.payload.response.AccountResponseDto;
@@ -86,6 +87,12 @@ public class AuthenticationService {
                 token,
                 this.modelMapper.map(account, AccountResponseDto.class)
         );
+    }
+
+    public String forgotPassword(ForgotPasswordRequestDto requestDto) {
+        Account account = this.accountService.findOneByEmailOrElseThrowNotFound(requestDto.getEmail());
+
+        return account.getHash();
     }
 
 }
