@@ -64,6 +64,7 @@ public class MailService {
 
         context.setVariable("email", receiver);
         context.setVariable("password", password);
+        context.setVariable("appUrl", System.getenv("APP_URL"));
 
         String body = templateEngine.process(MailConstants.FILE_CREATE_ACCOUNT, context);
 

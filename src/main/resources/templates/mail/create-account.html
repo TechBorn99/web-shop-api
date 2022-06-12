@@ -1,0 +1,16 @@
+<!DOCTYPE "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+    </head>
+    <body>
+        <h1>Welcome to the WebShop!</h1>
+        <br />
+        <p>Your account was successfully created. Please enter the following credentials to access it:</p>
+        <br />
+        <br />
+        <h3>E-mail address: <strong th:text="${email}"></strong></h3>
+        <h3>Password: <strong th:text="${password}"></strong></h3>
+        <br />
+        <h4><a href="http://localhost:8080/api">Link to the application</a></h4>
+    </body>
+</html>

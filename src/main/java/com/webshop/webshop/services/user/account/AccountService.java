@@ -5,6 +5,7 @@ import com.webshop.webshop.domain.user.account.Role;
 import com.webshop.webshop.repositories.AccountRepository;
 import com.webshop.webshop.services.mail.MailService;
 import com.webshop.webshop.services.role.RoleService;
+import com.webshop.webshop.utils.HashValueProvider;
 import com.webshop.webshop.utils.exceptions.consts.ExceptionErrorCodeType;
 import com.webshop.webshop.utils.exceptions.types.EntityAlreadyExistsException;
 import com.webshop.webshop.utils.exceptions.types.EntityNotFoundException;
@@ -53,6 +54,7 @@ public class AccountService {
         try {
             return accountRepository.save(account);
         } catch (Exception ex) {
+            ex.printStackTrace();
             throw new EntityNotSavedException(ExceptionErrorCodeType.ACCOUNT_NOT_SAVED,
                     "Account not saved in the database");
         }
@@ -66,7 +68,9 @@ public class AccountService {
         String password = RandomString.make(16);
 
         account.setRole(role);
+        account.setIsActive(true);
         account.setPassword(this.bCryptPasswordEncoder.encode(password));
+        account.setHash(HashValueProvider.generateHash());
 
         this.mailService.composeWelcomeMail(requestDto.getEmail(), password);
 
