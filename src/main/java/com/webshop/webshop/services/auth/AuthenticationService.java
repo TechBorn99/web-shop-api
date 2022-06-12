@@ -4,6 +4,7 @@ import com.webshop.webshop.domain.user.WebShopAdmin;
 import com.webshop.webshop.domain.user.WebShopCustomer;
 import com.webshop.webshop.domain.user.WebShopSeller;
 import com.webshop.webshop.domain.user.account.Account;
+import com.webshop.webshop.services.mail.MailService;
 import com.webshop.webshop.services.user.WebShopAdminService;
 import com.webshop.webshop.services.user.WebShopCustomerService;
 import com.webshop.webshop.services.user.WebShopSellerService;
@@ -46,6 +47,9 @@ public class AuthenticationService {
 
     @Autowired
     private TokenProvider tokenProvider;
+
+    @Autowired
+    private MailService mailService;
 
     public AccountResponseDto signUp(SignUpRequestDto requestDto) {
         accountService.findOneByEmailAndThrowIfExists(requestDto.getEmail());
@@ -91,6 +95,13 @@ public class AuthenticationService {
 
     public String forgotPassword(ForgotPasswordRequestDto requestDto) {
         Account account = this.accountService.findOneByEmailOrElseThrowNotFound(requestDto.getEmail());
+
+        mailService.composeForgotPasswordMail(
+                new String[] { requestDto.getEmail() },
+                System.getenv("RESET_PASSWORD_URL")
+                        + "/auth/reset-password?token="
+                        + account.getHash()
+        );
 
         return account.getHash();
     }
