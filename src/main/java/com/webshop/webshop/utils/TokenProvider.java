@@ -27,32 +27,38 @@ public class TokenProvider {
 
     public String getUsernameFromToken(String token) {
         String username;
+
         try {
             Claims claims = this.getClaimsFromToken(token);
             username = claims.getSubject();
         } catch (Exception ex) {
             username = null;
         }
+
         return username;
     }
 
     private Claims getClaimsFromToken(String token) {
         Claims claims;
+
         try {
             claims = Jwts.parser().setSigningKey(this.secret).parseClaimsJws(token).getBody();
         } catch (Exception ex) {
             claims = null;
         }
+
         return claims;
     }
 
     public Date getExpirationDateFromToken(String token) {
         Date expirationDate;
+
         try {
             expirationDate = this.getClaimsFromToken(token).getExpiration();
         } catch (Exception ex) {
             expirationDate = null;
         }
+
         return expirationDate;
     }
 
@@ -62,13 +68,19 @@ public class TokenProvider {
 
     public boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
+
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
     public String generateToken(Account account) {
         Map<String, Object> claims = new HashMap<>();
+
         claims.put("sub", account.getEmail());
-        return Jwts.builder().setClaims(claims).setExpiration(new Date(System.currentTimeMillis() + expiration * 1000))
+
+        return Jwts
+                .builder()
+                .setClaims(claims)
+                .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 }

@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class SignUpResponseDto extends BaseWithTimestampsDto {
+public class AccountResponseDto extends BaseWithTimestampsDto {
 
     private String firstName;
     private String lastName;
