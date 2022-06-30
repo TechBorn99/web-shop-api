@@ -101,7 +101,7 @@ public class AuthenticationService {
 
         mailService.composeForgotPasswordMail(
                 new String[] { requestDto.getEmail() },
-                System.getenv("RESET_PASSWORD_URL")
+                System.getenv("CLIENT_APP_URL")
                         + "/auth/reset-password?token="
                         + account.getHash()
         );
