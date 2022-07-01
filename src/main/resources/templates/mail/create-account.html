@@ -11,6 +11,6 @@
         <h3>E-mail address: <strong th:text="${email}"></strong></h3>
         <h3>Password: <strong th:text="${password}"></strong></h3>
         <br />
-        <h4><a href="${@environment.getProperty('CLIENT_APP_URL')}/auth/sign-in">Link to the sing-in page</a></h4>
+        <h4><a th:href="${signInUrl}">Link to the sing-in page</a></h4>
     </body>
 </html>

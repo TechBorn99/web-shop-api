@@ -67,13 +67,15 @@ public class AccountService {
         Role role = roleService.findOneByNameOrElseThrowNotFound(requestDto.getRole());
         String password = RandomString.make(16);
 
+        String signInUrl = System.getenv("CLIENT_APP_URL") + "/auth/sign-in";
+
         account.setRole(role);
         account.setIsActive(true);
         account.setPassword(this.bCryptPasswordEncoder.encode(password));
         account.setHash(HashValueProvider.generateHash());
         account.setPhoneNumber(requestDto.getPhoneNumber());
 
-        this.mailService.composeWelcomeMail(requestDto.getEmail(), password);
+        this.mailService.composeWelcomeMail(requestDto.getEmail(), password, signInUrl);
 
         return this.save(account);
     }
