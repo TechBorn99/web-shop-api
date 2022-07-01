@@ -63,14 +63,15 @@ public class AccountService {
     public Account createAndGeneratePassword(SignUpRequestDto requestDto) {
         this.findOneByEmailAndThrowIfExists(requestDto.getEmail());
 
-        Role role = this.roleService.findOneByNameOrElseThrowNotFound(requestDto.getRole().getName());
         Account account = new Account(requestDto);
+        Role role = roleService.findOneByNameOrElseThrowNotFound(requestDto.getRole());
         String password = RandomString.make(16);
 
         account.setRole(role);
         account.setIsActive(true);
         account.setPassword(this.bCryptPasswordEncoder.encode(password));
         account.setHash(HashValueProvider.generateHash());
+        account.setPhoneNumber(requestDto.getPhoneNumber());
 
         this.mailService.composeWelcomeMail(requestDto.getEmail(), password);
 

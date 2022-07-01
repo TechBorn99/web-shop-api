@@ -35,6 +35,9 @@ public class Account extends BaseEntity {
     @NotNull
     private Boolean isActive = false;
 
+    @NotNull
+    private String phoneNumber;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;
