@@ -11,10 +11,7 @@ import com.webshop.webshop.web.rest.auth.payload.response.SignInResponseDto;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -43,7 +40,7 @@ public class AuthenticationResource {
         return ReturnResponse.entityGet(authenticationService.forgotPassword(requestDto));
     }
 
-    @PostMapping("/reset-password")
+    @PutMapping("/reset-password")
     @ApiOperation("Endpoint for resetting password.")
     public ResponseEntity<Void> resetPassword(@RequestBody @Valid ResetPasswordRequestDto requestDto) {
         return ReturnResponse.entityUpdated(authenticationService.resetPassword(requestDto));

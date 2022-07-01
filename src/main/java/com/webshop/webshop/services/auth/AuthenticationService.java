@@ -110,9 +110,9 @@ public class AuthenticationService {
     }
 
     public Void resetPassword(ResetPasswordRequestDto requestDto) {
-        Account account = accountService.findOneByHashOrElseThrowNotFound(requestDto.getHash());
+        Account account = accountService.findOneByHashOrElseThrowNotFound(requestDto.getToken());
 
-        account.setPassword(requestDto.getPassword());
+        account.setPassword(this.bCryptPasswordEncoder.encode(requestDto.getPassword()));
         account.setHash(HashValueProvider.generateHash());
 
         accountService.save(account);

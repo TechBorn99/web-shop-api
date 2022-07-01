@@ -13,6 +13,6 @@ public class ResetPasswordRequestDto {
     private String password;
 
     @NotBlank
-    private String hash;
+    private String token;
 
 }
