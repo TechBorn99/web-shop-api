@@ -2,6 +2,11 @@ package com.webshop.webshop.web.rest.auth;
 
 import com.webshop.webshop.services.auth.AuthenticationService;
 import com.webshop.webshop.utils.ReturnResponse;
+import com.webshop.webshop.utils.exceptions.BaseException;
+import com.webshop.webshop.utils.exceptions.types.EmailNotSentException;
+import com.webshop.webshop.utils.exceptions.types.EntityAlreadyExistsException;
+import com.webshop.webshop.utils.exceptions.types.EntityNotFoundException;
+import com.webshop.webshop.utils.exceptions.types.InvalidPhoneNumberException;
 import com.webshop.webshop.web.rest.auth.payload.request.ForgotPasswordRequestDto;
 import com.webshop.webshop.web.rest.auth.payload.request.ResetPasswordRequestDto;
 import com.webshop.webshop.web.rest.auth.payload.request.SignInRequestDto;
@@ -12,10 +17,12 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 
 @RestController
+@ControllerAdvice
 @RequestMapping("/api/auth")
 public class AuthenticationResource {
 
@@ -25,7 +32,11 @@ public class AuthenticationResource {
     @PostMapping("/sign-up")
     @ApiOperation("Endpoint for user sign up.")
     public ResponseEntity<AccountResponseDto> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto) {
-        return ReturnResponse.entityCreated(authenticationService.signUp(signUpRequestDto));
+        try {
+            return ReturnResponse.entityCreated(authenticationService.signUp(signUpRequestDto));
+        } catch (BaseException ex) {
+            throw new ResponseStatusException(ex.getStatus(), ex.getMessage());
+        }
     }
 
     @PostMapping("/sign-in")
