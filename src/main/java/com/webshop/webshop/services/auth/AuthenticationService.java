@@ -127,7 +127,7 @@ public class AuthenticationService {
 
     public AccountResponseDto getLoggedInUser(UserPrincipal principal) {
         return modelMapper.map(
-                accountService.findOneByHashOrElseThrowNotFound(principal.getUuid()),
+                accountService.findOneByUuidOrElseThrowNotFound(principal.getUuid()),
                 AccountResponseDto.class
         );
     }
