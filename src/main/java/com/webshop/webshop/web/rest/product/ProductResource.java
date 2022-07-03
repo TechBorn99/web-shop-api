@@ -7,6 +7,7 @@ import com.webshop.webshop.services.product.ProductService;
 import com.webshop.webshop.utils.ReturnResponse;
 import com.webshop.webshop.utils.exceptions.BaseException;
 import com.webshop.webshop.web.rest.product.payload.request.CreateProductRequestDTO;
+import com.webshop.webshop.web.rest.product.payload.request.get.GetProductPageWithFiltersRequestDTO;
 import com.webshop.webshop.web.rest.product.payload.response.ProductResponseDTO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +27,17 @@ public class ProductResource {
     @Autowired
     private ProductService productService;
 
-    @GetMapping
+    @PostMapping
     @ApiOperation("Endpoint for getting a paginated list of products.")
-    public ResponseEntity<Page<ProductResponseDTO>> handleGetProducts(Pageable pageable) {
+    public ResponseEntity<Page<ProductResponseDTO>> handleGetProducts(GetProductPageWithFiltersRequestDTO requestDTO) {
         try {
-            return ReturnResponse.entityGet(this.productService.getProducts(pageable));
+            return ReturnResponse.entityGet(this.productService.getProductsWithFiltersAndSorters(requestDTO));
         } catch (BaseException ex) {
             throw new ResponseStatusException(ex.getStatus(), ex.getMessage());
         }
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @PreAuthorize(AuthoritiesConstants.AUTH_WEBSHOP_SELLER)
     @ApiOperation("Endpoint for creating a new product.")
     public ResponseEntity<ProductResponseDTO> handleCreateProduct(

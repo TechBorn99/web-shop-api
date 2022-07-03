@@ -1,7 +1,9 @@
 package com.webshop.webshop.web.rest.product.payload.response;
 
-import com.webshop.webshop.domain.user.WebShopSeller;
+import com.webshop.webshop.web.rest.user.payload.response.WebShopSellerResponseDTO;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 @Data
 public class ProductResponseDTO {
@@ -10,10 +12,12 @@ public class ProductResponseDTO {
 
     private String description;
 
-    private WebShopSeller seller;
+    private WebShopSellerResponseDTO seller;
 
     private boolean isAvailable;
 
     private Double price;
+
+    private LocalDateTime createdAt;
 
 }
