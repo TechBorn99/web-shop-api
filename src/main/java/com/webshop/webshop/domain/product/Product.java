@@ -31,7 +31,7 @@ public class Product extends BaseEntity {
     private WebShopSeller seller;
 
     @NotNull
-    private boolean isAvailable;
+    private Boolean isAvailable;
 
     @NotNull
     @Min(value = 0)

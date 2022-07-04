@@ -10,6 +10,8 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
+    List<Product> findByDeletedAtIsNull();
+
     List<Product> findAllBySellerUuidAndName(String uuid, String name);
 
     Optional<Product> findOneByUuid(String uuid);

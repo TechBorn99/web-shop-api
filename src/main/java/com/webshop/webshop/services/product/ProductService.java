@@ -43,7 +43,7 @@ public class ProductService {
     private ModelMapper modelMapper;
 
     private ArrayList<Product> findProducts() {
-        return new ArrayList<>(this.productRepository.findAll());
+        return new ArrayList<>(this.productRepository.findByDeletedAtIsNull());
     }
 
     private boolean doesProductContainsString(Product product, String filterString) {
@@ -215,7 +215,7 @@ public class ProductService {
 
         Product product = new Product();
 
-        product.setAvailable(requestDTO.getIsAvailable());
+        product.setIsAvailable(requestDTO.getIsAvailable());
         product.setDescription(requestDTO.getDescription());
         product.setName(requestDTO.getName());
         product.setPrice(requestDTO.getPrice());
@@ -243,7 +243,7 @@ public class ProductService {
 
         this.checkIfProductBelongsToSeller(product, principal.getUuid());
 
-        product.setAvailable(true);
+        product.setIsAvailable(true);
 
         return this.modelMapper.map(this.save(product), ProductResponseDTO.class);
     }
@@ -253,7 +253,7 @@ public class ProductService {
 
         this.checkIfProductBelongsToSeller(product, principal.getUuid());
 
-        product.setAvailable(false);
+        product.setIsAvailable(false);
 
         return this.modelMapper.map(this.save(product), ProductResponseDTO.class);
     }
