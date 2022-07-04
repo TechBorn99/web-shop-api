@@ -257,4 +257,16 @@ public class ProductService {
 
         return this.modelMapper.map(this.save(product), ProductResponseDTO.class);
     }
+
+    public Void softDeleteProduct(UserPrincipal principal, String productUuid) {
+        Product product = this.findOneByUuidAndThrowIfDoesNotExist(productUuid);
+
+        this.checkIfProductBelongsToSeller(product, principal.getUuid());
+
+        product.setDeletedAt(LocalDateTime.now());
+
+        this.save(product);
+
+        return null;
+    }
 }
