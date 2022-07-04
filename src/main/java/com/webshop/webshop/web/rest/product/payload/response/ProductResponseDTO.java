@@ -8,13 +8,15 @@ import java.time.LocalDateTime;
 @Data
 public class ProductResponseDTO {
 
+    private String uuid;
+
     private String name;
 
     private String description;
 
     private WebShopSellerResponseDTO seller;
 
-    private boolean isAvailable;
+    private Boolean isAvailable;
 
     private Double price;
 

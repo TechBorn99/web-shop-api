@@ -14,6 +14,7 @@ import com.webshop.webshop.web.rest.product.payload.request.CreateProductRequest
 import com.webshop.webshop.web.rest.product.payload.request.get.GetProductPageWithFiltersRequestDTO;
 import com.webshop.webshop.web.rest.product.payload.request.get.ProductFilterRequestDTO;
 import com.webshop.webshop.web.rest.product.payload.request.get.ProductSortersRequestDTO;
+import com.webshop.webshop.web.rest.product.payload.response.ProductPageResponseDTO;
 import com.webshop.webshop.web.rest.product.payload.response.ProductResponseDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,20 +132,27 @@ public class ProductService {
     }
 
     private Page<Product> pageProducts(ArrayList<Product> products, long start, long end, Pageable pageable) {
-        return new PageImpl<>(products.subList((int) start, (int) end), pageable, products.size());
+        return new PageImpl<>(
+                products.subList(
+                        (int) start,
+                        Math.min(((int) end), products.size())
+                ),
+                pageable,
+                products.size()
+        );
     }
 
-    public Page<ProductResponseDTO> getProductsWithFiltersAndSorters(GetProductPageWithFiltersRequestDTO requestDTO) {
+    public ProductPageResponseDTO getProductsWithFiltersAndSorters(GetProductPageWithFiltersRequestDTO requestDTO) {
         ArrayList<Product> products = this.findProducts();
 
-        if (products.size() == 0) return Page.empty();
+        if (products.size() == 0) return new ProductPageResponseDTO();
 
         ArrayList<Product> filteredProducts = null;
 
         if (requestDTO.getFilters() != null) {
             filteredProducts = this.filterProducts(products, requestDTO.getFilters());
 
-            if (filteredProducts.size() == 0) return Page.empty();
+            if (filteredProducts.size() == 0) return new ProductPageResponseDTO();
         }
 
         ArrayList<Product> sortedProducts = null;
@@ -156,13 +164,11 @@ public class ProductService {
             );
         }
 
-        int offset, pageSize, pageNumber;
-
-        if (requestDTO.getPageable() == null) {
-            offset = 0;
-            pageSize = 10;
+        int offset = 0,
+            pageSize = 10,
             pageNumber = 1;
-        } else {
+
+        if (requestDTO.getPageable() != null) {
             offset = requestDTO.getPageable().getOffset();
             pageSize = requestDTO.getPageable().getPageSize();
             pageNumber = requestDTO.getPageable().getPageNumber();
@@ -177,7 +183,10 @@ public class ProductService {
                 PageRequest.of(pageNumber, pageSize)
         );
 
-        return pagedProducts.map(product -> this.modelMapper.map(product, ProductResponseDTO.class));
+        return new ProductPageResponseDTO(
+                pagedProducts.map(product -> this.modelMapper.map(product, ProductResponseDTO.class)),
+                products.size()
+        );
     }
 
     private List<Product> findAllBySellerUuidAndName(String sellerUuid, String productName) {

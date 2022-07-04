@@ -8,11 +8,11 @@ import com.webshop.webshop.utils.ReturnResponse;
 import com.webshop.webshop.utils.exceptions.BaseException;
 import com.webshop.webshop.web.rest.product.payload.request.CreateProductRequestDTO;
 import com.webshop.webshop.web.rest.product.payload.request.get.GetProductPageWithFiltersRequestDTO;
+import com.webshop.webshop.web.rest.product.payload.response.ProductPageResponseDTO;
 import com.webshop.webshop.web.rest.product.payload.response.ProductResponseDTO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +29,7 @@ public class ProductResource {
 
     @PostMapping
     @ApiOperation("Endpoint for getting a paginated list of products.")
-    public ResponseEntity<Page<ProductResponseDTO>> handleGetProducts(GetProductPageWithFiltersRequestDTO requestDTO) {
+    public ResponseEntity<ProductPageResponseDTO> handleGetProducts(@RequestBody @Valid GetProductPageWithFiltersRequestDTO requestDTO) {
         try {
             return ReturnResponse.entityGet(this.productService.getProductsWithFiltersAndSorters(requestDTO));
         } catch (BaseException ex) {
