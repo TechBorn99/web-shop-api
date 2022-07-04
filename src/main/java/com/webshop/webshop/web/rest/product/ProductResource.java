@@ -51,4 +51,31 @@ public class ProductResource {
         }
     }
 
+    @PutMapping("/product/{uuid}/available")
+    @PreAuthorize(AuthoritiesConstants.AUTH_WEBSHOP_SELLER)
+    @ApiOperation("Endpoint for setting a product as available")
+    public ResponseEntity<ProductResponseDTO> handleMakeProductAvailable(
+            @AuthenticatedUser UserPrincipal principal,
+            @PathVariable("uuid") String uuid
+    ) {
+        try {
+            return ReturnResponse.entityUpdated(this.productService.makeProductAvailable(principal, uuid));
+        } catch (BaseException ex) {
+            throw new ResponseStatusException(ex.getStatus(), ex.getMessage());
+        }
+    }
+
+    @PutMapping("/product/{uuid}/not-available")
+    @PreAuthorize(AuthoritiesConstants.AUTH_WEBSHOP_SELLER)
+    @ApiOperation("Endpoint for setting a product as unavailable")
+    public ResponseEntity<ProductResponseDTO> handleMakeProductUnavailable(
+            @AuthenticatedUser UserPrincipal principal,
+            @PathVariable("uuid") String uuid
+    ) {
+        try {
+            return ReturnResponse.entityUpdated(this.productService.makeProductUnavailable(principal, uuid));
+        } catch (BaseException ex) {
+            throw new ResponseStatusException(ex.getStatus(), ex.getMessage());
+        }
+    }
 }

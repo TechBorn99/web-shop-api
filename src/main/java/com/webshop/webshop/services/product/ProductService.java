@@ -7,9 +7,7 @@ import com.webshop.webshop.repositories.ProductRepository;
 import com.webshop.webshop.services.user.WebShopSellerService;
 import com.webshop.webshop.utils.enums.ProductAttributesSortBy;
 import com.webshop.webshop.utils.exceptions.consts.ExceptionErrorCodeType;
-import com.webshop.webshop.utils.exceptions.types.EntityAlreadyExistsException;
-import com.webshop.webshop.utils.exceptions.types.EntityNotSavedException;
-import com.webshop.webshop.utils.exceptions.types.InvalidProductSortAttributeException;
+import com.webshop.webshop.utils.exceptions.types.*;
 import com.webshop.webshop.web.rest.product.payload.request.CreateProductRequestDTO;
 import com.webshop.webshop.web.rest.product.payload.request.get.GetProductPageWithFiltersRequestDTO;
 import com.webshop.webshop.web.rest.product.payload.request.get.ProductFilterRequestDTO;
@@ -211,7 +209,7 @@ public class ProductService {
     }
 
     public ProductResponseDTO createProduct(UserPrincipal principal, CreateProductRequestDTO requestDTO) {
-        WebShopSeller seller = this.webShopSellerService.findOneByUuid(principal.getUuid());
+        WebShopSeller seller = this.webShopSellerService.findOneByUuidAndThrowIfDoesNotExist(principal.getUuid());
 
         this.productWithSellerUuidAndNameDoesNotExistAndThrowIfItDoes(principal.getUuid(), requestDTO.getName());
 
@@ -222,6 +220,40 @@ public class ProductService {
         product.setName(requestDTO.getName());
         product.setPrice(requestDTO.getPrice());
         product.setSeller(seller);
+
+        return this.modelMapper.map(this.save(product), ProductResponseDTO.class);
+    }
+
+    public Product findOneByUuidAndThrowIfDoesNotExist(String uuid) {
+        return this.productRepository.findOneByUuid(uuid).orElseThrow(
+                () -> new EntityNotFoundException(ExceptionErrorCodeType.PRODUCT_NOT_FOUND_BY_UUID,
+                        "Product with uuid: " + uuid + " not found.")
+        );
+    }
+
+    private void checkIfProductBelongsToSeller(Product product, String sellerUuid) {
+        if (!product.getSeller().getUuid().equals(sellerUuid)) {
+            throw new UserUnauthorizedException(ExceptionErrorCodeType.PRODUCT_DOES_NOT_BELONG_TO_SELLER,
+                    "Product with uuid: " + product.getUuid() + " does not belong to seller with uuid: " + sellerUuid);
+        }
+    }
+
+    public ProductResponseDTO makeProductAvailable(UserPrincipal principal, String uuid) {
+        Product product = this.findOneByUuidAndThrowIfDoesNotExist(uuid);
+
+        this.checkIfProductBelongsToSeller(product, principal.getUuid());
+
+        product.setAvailable(true);
+
+        return this.modelMapper.map(this.save(product), ProductResponseDTO.class);
+    }
+
+    public ProductResponseDTO makeProductUnavailable(UserPrincipal principal, String uuid) {
+        Product product = this.findOneByUuidAndThrowIfDoesNotExist(uuid);
+
+        this.checkIfProductBelongsToSeller(product, principal.getUuid());
+
+        product.setAvailable(false);
 
         return this.modelMapper.map(this.save(product), ProductResponseDTO.class);
     }

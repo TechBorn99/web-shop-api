@@ -30,7 +30,7 @@ public class WebShopSellerService {
         }
     }
 
-    public WebShopSeller findOneByUuid(String uuid) {
+    public WebShopSeller findOneByUuidAndThrowIfDoesNotExist(String uuid) {
         return this.webShopSellerRepository.findOneByUuid(uuid).orElseThrow(
                 () -> new EntityNotFoundException(ExceptionErrorCodeType.WEBSHOP_SELLER_NOT_FOUND_BY_UUID,
                 "WebShop seller with the uuid: " + uuid + " not found.")
@@ -38,7 +38,7 @@ public class WebShopSellerService {
     }
 
     public WebShopSellerResponseDTO getByUuid(String uuid) {
-        return this.modelMapper.map(this.findOneByUuid(uuid), WebShopSellerResponseDTO.class);
+        return this.modelMapper.map(this.findOneByUuidAndThrowIfDoesNotExist(uuid), WebShopSellerResponseDTO.class);
     }
 
 }
