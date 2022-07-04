@@ -43,7 +43,7 @@ public class ProductService {
     private ModelMapper modelMapper;
 
     private ArrayList<Product> findProducts() {
-        return new ArrayList<>(this.productRepository.findByDeletedAtIsNull());
+        return new ArrayList<>(this.productRepository.findByDeletedAtIsNullOrderByCreatedAtDesc());
     }
 
     private boolean doesProductContainsString(Product product, String filterString) {

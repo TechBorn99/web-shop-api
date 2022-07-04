@@ -12,7 +12,6 @@ import com.webshop.webshop.web.rest.product.payload.response.ProductPageResponse
 import com.webshop.webshop.web.rest.product.payload.response.ProductResponseDTO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -51,6 +50,20 @@ public class ProductResource {
         }
     }
 
+    @DeleteMapping("/product/{uuid}")
+    @PreAuthorize(AuthoritiesConstants.AUTH_WEBSHOP_SELLER)
+    @ApiOperation("Endpoint for (soft) deleting a product.")
+    public ResponseEntity<Void> handleSoftDeleteProduct(
+            @AuthenticatedUser UserPrincipal principal,
+            @PathVariable("uuid") String uuid
+    ) {
+        try {
+            return ReturnResponse.entityDeleted(this.productService.softDeleteProduct(principal, uuid));
+        } catch (BaseException ex) {
+            throw new ResponseStatusException(ex.getStatus(), ex.getMessage());
+        }
+    }
+
     @PutMapping("/product/{uuid}/available")
     @PreAuthorize(AuthoritiesConstants.AUTH_WEBSHOP_SELLER)
     @ApiOperation("Endpoint for setting a product as available.")
@@ -74,20 +87,6 @@ public class ProductResource {
     ) {
         try {
             return ReturnResponse.entityUpdated(this.productService.makeProductUnavailable(principal, uuid));
-        } catch (BaseException ex) {
-            throw new ResponseStatusException(ex.getStatus(), ex.getMessage());
-        }
-    }
-
-    @DeleteMapping("/product/{uuid}")
-    @PreAuthorize(AuthoritiesConstants.AUTH_WEBSHOP_SELLER)
-    @ApiOperation("Endpoint for (soft) deleting a product.")
-    public ResponseEntity<Void> handleSoftDeleteProduct(
-            @AuthenticatedUser UserPrincipal principal,
-            @PathVariable("uuid") String uuid
-    ) {
-        try {
-            return ReturnResponse.entityDeleted(this.productService.softDeleteProduct(principal, uuid));
         } catch (BaseException ex) {
             throw new ResponseStatusException(ex.getStatus(), ex.getMessage());
         }
