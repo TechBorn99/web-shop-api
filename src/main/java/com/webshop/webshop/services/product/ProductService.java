@@ -60,7 +60,7 @@ public class ProductService {
     }
 
     private ArrayList<Product> filterProducts(ArrayList<Product> products, ProductFilterRequestDTO requestDTO) {
-        return products.stream().filter(product -> {
+        ArrayList<Product> filteredProducts = products.stream().filter(product -> {
             boolean isContainedWithinSearchQueryFilter = true;
             boolean isContainedWithinDateFilter = true;
             boolean isContainedWithinPriceFilter = true;
@@ -100,6 +100,8 @@ public class ProductService {
                     && isContainedWithinDateFilter
                     && isContainedWithinPriceFilter;
         }).collect(toCollection(ArrayList::new));
+
+        return filteredProducts;
     }
 
     private ArrayList<Product> sortProducts(ArrayList<Product> products, ProductSortersRequestDTO requestDTO) {
@@ -183,7 +185,7 @@ public class ProductService {
 
         return new ProductPageResponseDTO(
                 pagedProducts.map(product -> this.modelMapper.map(product, ProductResponseDTO.class)),
-                products.size()
+                filteredProducts != null ? filteredProducts.size() : products.size()
         );
     }
 
