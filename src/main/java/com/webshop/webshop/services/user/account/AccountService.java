@@ -50,6 +50,12 @@ public class AccountService {
                         "Account with hash " + hash + " not found"));
     }
 
+    public Account findOneByUuidOrElseThrowNotFound (String uuid) {
+        return accountRepository.findOneByUuid(uuid).orElseThrow(
+                () -> new EntityNotFoundException(ExceptionErrorCodeType.ACCOUNT_NOT_FOUND_BY_HASH,
+                        "Account with uuid " + uuid + " not found"));
+    }
+
     public Account save(Account account) {
         try {
             return accountRepository.save(account);

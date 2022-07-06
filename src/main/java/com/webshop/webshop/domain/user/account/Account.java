@@ -38,6 +38,9 @@ public class Account extends BaseEntity {
     @NotNull
     private String phoneNumber;
 
+    // nullable
+    // private String imageUrl;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;

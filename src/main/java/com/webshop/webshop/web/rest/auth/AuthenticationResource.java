@@ -22,7 +22,6 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.validation.Valid;
 
 @RestController
-@ControllerAdvice
 @RequestMapping("/api/auth")
 public class AuthenticationResource {
 
@@ -42,18 +41,30 @@ public class AuthenticationResource {
     @PostMapping("/sign-in")
     @ApiOperation("Endpoint for user sign in.")
     public ResponseEntity<SignInResponseDto> signIn(@RequestBody @Valid SignInRequestDto requestDto) {
-        return ReturnResponse.entityGet(authenticationService.signIn(requestDto));
+        try {
+            return ReturnResponse.entityGet(authenticationService.signIn(requestDto));
+        } catch (BaseException ex) {
+            throw new ResponseStatusException(ex.getStatus(), ex.getMessage());
+        }
     }
 
     @PostMapping("/forgot-password")
     @ApiOperation("Endpoint for the forgot password functionality.")
     public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequestDto requestDto) {
-        return ReturnResponse.entityGet(authenticationService.forgotPassword(requestDto));
+        try {
+            return ReturnResponse.entityGet(authenticationService.forgotPassword(requestDto));
+        } catch (BaseException ex) {
+            throw new ResponseStatusException(ex.getStatus(), ex.getMessage());
+        }
     }
 
     @PutMapping("/reset-password")
     @ApiOperation("Endpoint for resetting password.")
     public ResponseEntity<Void> resetPassword(@RequestBody @Valid ResetPasswordRequestDto requestDto) {
-        return ReturnResponse.entityUpdated(authenticationService.resetPassword(requestDto));
+        try {
+            return ReturnResponse.entityUpdated(authenticationService.resetPassword(requestDto));
+        } catch (BaseException ex) {
+            throw new ResponseStatusException(ex.getStatus(), ex.getMessage());
+        }
     }
 }

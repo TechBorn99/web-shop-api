@@ -1,5 +1,6 @@
 package com.webshop.webshop.services.auth;
 
+import com.webshop.webshop.configs.security.models.UserPrincipal;
 import com.webshop.webshop.domain.user.WebShopAdmin;
 import com.webshop.webshop.domain.user.WebShopCustomer;
 import com.webshop.webshop.domain.user.WebShopSeller;
@@ -122,5 +123,12 @@ public class AuthenticationService {
         accountService.save(account);
 
         return null;
+    }
+
+    public AccountResponseDto getLoggedInUser(UserPrincipal principal) {
+        return modelMapper.map(
+                accountService.findOneByUuidOrElseThrowNotFound(principal.getUuid()),
+                AccountResponseDto.class
+        );
     }
 }
