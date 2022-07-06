@@ -9,6 +9,7 @@ import com.webshop.webshop.utils.enums.ProductAttributesSortBy;
 import com.webshop.webshop.utils.exceptions.consts.ExceptionErrorCodeType;
 import com.webshop.webshop.utils.exceptions.types.*;
 import com.webshop.webshop.web.rest.product.payload.request.CreateProductRequestDTO;
+import com.webshop.webshop.web.rest.product.payload.request.UpdateProductRequestDTO;
 import com.webshop.webshop.web.rest.product.payload.request.get.GetProductPageWithFiltersRequestDTO;
 import com.webshop.webshop.web.rest.product.payload.request.get.ProductFilterRequestDTO;
 import com.webshop.webshop.web.rest.product.payload.request.get.ProductSortersRequestDTO;
@@ -270,5 +271,20 @@ public class ProductService {
         this.save(product);
 
         return null;
+    }
+
+    public ProductResponseDTO updateProduct(UserPrincipal principal, UpdateProductRequestDTO requestDTO) {
+        Product product = this.findOneByUuidAndThrowIfDoesNotExist(requestDTO.getUuid());
+
+        this.checkIfProductBelongsToSeller(product, principal.getUuid());
+
+        product.setName(requestDTO.getName());
+        product.setPrice(requestDTO.getPrice());
+        product.setDescription(requestDTO.getDescription());
+        product.setIsAvailable(requestDTO.getIsAvailable());
+
+        this.save(product);
+
+        return this.modelMapper.map(product, ProductResponseDTO.class);
     }
 }

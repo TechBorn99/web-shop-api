@@ -7,6 +7,7 @@ import com.webshop.webshop.services.product.ProductService;
 import com.webshop.webshop.utils.ReturnResponse;
 import com.webshop.webshop.utils.exceptions.BaseException;
 import com.webshop.webshop.web.rest.product.payload.request.CreateProductRequestDTO;
+import com.webshop.webshop.web.rest.product.payload.request.UpdateProductRequestDTO;
 import com.webshop.webshop.web.rest.product.payload.request.get.GetProductPageWithFiltersRequestDTO;
 import com.webshop.webshop.web.rest.product.payload.response.ProductPageResponseDTO;
 import com.webshop.webshop.web.rest.product.payload.response.ProductResponseDTO;
@@ -45,6 +46,20 @@ public class ProductResource {
     ) {
         try {
             return ReturnResponse.entityCreated(this.productService.createProduct(principal, requestDTO));
+        } catch (BaseException ex) {
+            throw new ResponseStatusException(ex.getStatus(), ex.getMessage());
+        }
+    }
+
+    @PutMapping("/product/update")
+    @PreAuthorize(AuthoritiesConstants.AUTH_WEBSHOP_SELLER)
+    @ApiOperation("Endpoint for updating a product.")
+    public ResponseEntity<ProductResponseDTO> handleUpdateProduct(
+            @AuthenticatedUser UserPrincipal principal,
+            @RequestBody @Valid UpdateProductRequestDTO requestDTO
+    ) {
+        try {
+            return ReturnResponse.entityDeleted(this.productService.updateProduct(principal, requestDTO));
         } catch (BaseException ex) {
             throw new ResponseStatusException(ex.getStatus(), ex.getMessage());
         }
