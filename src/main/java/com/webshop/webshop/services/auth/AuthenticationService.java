@@ -1,9 +1,11 @@
 package com.webshop.webshop.services.auth;
 
+import com.webshop.webshop.configs.security.models.UserPrincipal;
 import com.webshop.webshop.domain.user.WebShopAdmin;
 import com.webshop.webshop.domain.user.WebShopCustomer;
 import com.webshop.webshop.domain.user.WebShopSeller;
 import com.webshop.webshop.domain.user.account.Account;
+import com.webshop.webshop.domain.user.account.Role;
 import com.webshop.webshop.services.mail.MailService;
 import com.webshop.webshop.services.role.RoleService;
 import com.webshop.webshop.services.user.WebShopAdminService;
@@ -15,6 +17,7 @@ import com.webshop.webshop.utils.HashValueProvider;
 import com.webshop.webshop.utils.TokenProvider;
 import com.webshop.webshop.utils.exceptions.consts.ExceptionErrorCodeType;
 import com.webshop.webshop.utils.exceptions.types.UserUnauthorizedException;
+import com.webshop.webshop.utils.phone_number.PhoneNumberValidator;
 import com.webshop.webshop.web.rest.auth.payload.request.ForgotPasswordRequestDto;
 import com.webshop.webshop.web.rest.auth.payload.request.ResetPasswordRequestDto;
 import com.webshop.webshop.web.rest.auth.payload.request.SignInRequestDto;
@@ -59,11 +62,13 @@ public class AuthenticationService {
     public AccountResponseDto signUp(SignUpRequestDto requestDto) {
         accountService.findOneByEmailAndThrowIfExists(requestDto.getEmail());
 
-        String roleName = requestDto.getRole().getName();
+        Role role = roleService.findOneByNameOrElseThrowNotFound(requestDto.getRole());
+
+        PhoneNumberValidator.validate(requestDto.getPhoneNumber());
 
         Account account = this.accountService.createAndGeneratePassword(requestDto);
 
-        switch (roleName) {
+        switch (role.getName()) {
             case AuthoritiesConstants.WEBSHOP_CUSTOMER:
                 this.webShopCustomerService.save(new WebShopCustomer(account));
                 break;
@@ -101,7 +106,7 @@ public class AuthenticationService {
 
         mailService.composeForgotPasswordMail(
                 new String[] { requestDto.getEmail() },
-                System.getenv("RESET_PASSWORD_URL")
+                System.getenv("CLIENT_APP_URL")
                         + "/auth/reset-password?token="
                         + account.getHash()
         );
@@ -110,13 +115,20 @@ public class AuthenticationService {
     }
 
     public Void resetPassword(ResetPasswordRequestDto requestDto) {
-        Account account = accountService.findOneByHashOrElseThrowNotFound(requestDto.getHash());
+        Account account = accountService.findOneByHashOrElseThrowNotFound(requestDto.getToken());
 
-        account.setPassword(requestDto.getPassword());
+        account.setPassword(this.bCryptPasswordEncoder.encode(requestDto.getPassword()));
         account.setHash(HashValueProvider.generateHash());
 
         accountService.save(account);
 
         return null;
+    }
+
+    public AccountResponseDto getLoggedInUser(UserPrincipal principal) {
+        return modelMapper.map(
+                accountService.findOneByUuidOrElseThrowNotFound(principal.getUuid()),
+                AccountResponseDto.class
+        );
     }
 }

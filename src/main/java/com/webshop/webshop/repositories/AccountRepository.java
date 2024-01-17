@@ -10,5 +10,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     Optional<Account> findOneByEmail(String email);
     Optional<Account> findOneByHash(String hash);
+    Optional<Account> findOneByUuid(String uuid);
 
 }

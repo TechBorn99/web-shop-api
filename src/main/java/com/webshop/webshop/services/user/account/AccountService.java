@@ -50,6 +50,12 @@ public class AccountService {
                         "Account with hash " + hash + " not found"));
     }
 
+    public Account findOneByUuidOrElseThrowNotFound (String uuid) {
+        return accountRepository.findOneByUuid(uuid).orElseThrow(
+                () -> new EntityNotFoundException(ExceptionErrorCodeType.ACCOUNT_NOT_FOUND_BY_HASH,
+                        "Account with uuid " + uuid + " not found"));
+    }
+
     public Account save(Account account) {
         try {
             return accountRepository.save(account);
@@ -63,16 +69,19 @@ public class AccountService {
     public Account createAndGeneratePassword(SignUpRequestDto requestDto) {
         this.findOneByEmailAndThrowIfExists(requestDto.getEmail());
 
-        Role role = this.roleService.findOneByNameOrElseThrowNotFound(requestDto.getRole().getName());
         Account account = new Account(requestDto);
+        Role role = roleService.findOneByNameOrElseThrowNotFound(requestDto.getRole());
         String password = RandomString.make(16);
+
+        String signInUrl = System.getenv("CLIENT_APP_URL") + "/auth/sign-in";
 
         account.setRole(role);
         account.setIsActive(true);
         account.setPassword(this.bCryptPasswordEncoder.encode(password));
         account.setHash(HashValueProvider.generateHash());
+        account.setPhoneNumber(requestDto.getPhoneNumber());
 
-        this.mailService.composeWelcomeMail(requestDto.getEmail(), password);
+        this.mailService.composeWelcomeMail(requestDto.getEmail(), password, signInUrl);
 
         return this.save(account);
     }
